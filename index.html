@@ -252,14 +252,14 @@ a { color: inherit; text-decoration: none; }
         <button type="submit" class="btn-primary" id="btn-login">Se connecter</button>
       </form>
       <form id="form-signup" autocomplete="on" novalidate style="display:none">
-        <div class="auth-field"><input type="text" id="signup-name" placeholder="prenom nom" autocomplete="name" autocapitalize="words"></div>
-        <div class="auth-field"><select id="signup-team"><option value="">-- choisir mon equipe --</option></select></div>
+        <div class="auth-field"><input type="text" id="signup-name" placeholder="pr&eacute;nom nom" autocomplete="name" autocapitalize="words"></div>
+        <div class="auth-field"><select id="signup-team"><option value="">-- choisir mon &eacute;quipe --</option></select></div>
         <div class="auth-field"><input type="email" id="signup-email" placeholder="email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off"></div>
-        <div class="auth-field"><input type="password" id="signup-password" placeholder="mot de passe (min 6 caracteres)" autocomplete="new-password"></div>
-        <button type="submit" class="btn-primary" id="btn-signup">Creer mon compte</button>
+        <div class="auth-field"><input type="password" id="signup-password" placeholder="mot de passe (min. 6 caract&egrave;res)" autocomplete="new-password"></div>
+        <button type="submit" class="btn-primary" id="btn-signup">Cr&eacute;er mon compte</button>
       </form>
     </div>
-    <div class="auth-footer">Montauban &middot; 2026</div>
+    <div class="auth-footer">Castelnau-d'Estr&eacute;tefonds &middot; 2026</div>
   </div>
 </div>
 
@@ -299,8 +299,8 @@ a { color: inherit; text-decoration: none; }
     <div class="section-title">Mon historique<span class="mono">Ce mois</span></div>
     <div id="my-history" class="rank-list"><div class="empty"><div class="empty-emoji">&#128519;</div>Aucune infraction ce mois.</div></div>
     <button type="button" class="btn-secondary" id="btn-correct" style="display:none">&#128465; Corriger une sanction</button>
-    <button type="button" class="btn-secondary" id="btn-admin" style="display:none">&#9881; Gerer l'equipe</button>
-    <button type="button" class="btn-danger" id="btn-logout">Se deconnecter</button>
+    <button type="button" class="btn-secondary" id="btn-admin" style="display:none">&#9881; G&eacute;rer l'&eacute;quipe</button>
+    <button type="button" class="btn-danger" id="btn-logout">Se d&eacute;connecter</button>
   </div>
 </div>
 
@@ -308,10 +308,10 @@ a { color: inherit; text-decoration: none; }
 <div class="screen" id="screen-admin">
   <div class="topbar">
     <button type="button" class="back" data-nav="profile">&lsaquo;</button>
-    <div class="logo">Equipe</div>
+    <div class="logo">&Eacute;quipe</div>
   </div>
   <div class="content">
-    <div class="section-title">Membres inscrits<span class="mono">Attribuer les roles</span></div>
+    <div class="section-title">Membres inscrits<span class="mono">Attribuer les r&ocirc;les</span></div>
     <div id="admin-list" class="rank-list"><div class="loader">Chargement...</div></div>
   </div>
 </div>
@@ -368,7 +368,7 @@ for (const url of CDN_URLS) {
   }
 }
 if (!createClient) {
-  bootError('Impossible de charger Supabase. Verifie ta connexion.');
+  bootError('Impossible de charger Supabase. Vérifie ta connexion.');
   throw new Error('Supabase load failed on all CDNs');
 }
 
@@ -425,8 +425,8 @@ async function loadTeamsForSignup() {
     console.warn('loadTeams failed, using fallback', e);
   }
   teams = list;
-  $('signup-team').innerHTML = '<option value="">-- choisir mon equipe --</option>' +
-    list.map(t => '<option value="' + esc(t.id) + '">Equipe ' + esc(t.chef_label || t.name || '') + '</option>').join('');
+  $('signup-team').innerHTML = '<option value="">-- choisir mon équipe --</option>' +
+    list.map(t => '<option value="' + esc(t.id) + '">Équipe ' + esc(t.chef_label || t.name || '') + '</option>').join('');
 }
 
 // Tab switch
@@ -459,7 +459,7 @@ async function doLogin(ev) {
       await bootApp();
     }
   } catch (e) {
-    showError('Erreur reseau : ' + (e.message || e));
+    showError('Erreur réseau : ' + (e.message || e));
   } finally {
     btn.disabled = false; btn.textContent = 'Se connecter';
   }
@@ -476,11 +476,11 @@ async function doSignup(ev) {
   const team_id = $('signup-team').value;
   const email = $('signup-email').value.trim();
   const password = $('signup-password').value;
-  if (!full_name) return showError('Prenom et nom requis');
-  if (!team_id) return showError('Choisis ton equipe');
+  if (!full_name) return showError('Prénom et nom requis');
+  if (!team_id) return showError('Choisis ton équipe');
   if (!email || !password) return showError('Email et mot de passe requis');
-  if (password.length < 6) return showError('Mot de passe : minimum 6 caracteres');
-  btn.disabled = true; btn.textContent = 'Creation...';
+  if (password.length < 6) return showError('Mot de passe : minimum 6 caractères');
+  btn.disabled = true; btn.textContent = 'Création...';
   try {
     const { data, error } = await sb.auth.signUp({
       email, password,
@@ -490,15 +490,15 @@ async function doSignup(ev) {
     if (data && data.session) {
       await bootApp();
     } else {
-      showSuccess('Compte cree ! Confirme ton email puis connecte-toi.');
+      showSuccess('Compte créé ! Confirme ton email puis connecte-toi.');
       const loginTab = document.querySelector('.auth-tab[data-tab="login"]');
       if (loginTab) loginTab.click();
       $('login-email').value = email;
     }
   } catch (e) {
-    showError('Erreur reseau : ' + (e.message || e));
+    showError('Erreur réseau : ' + (e.message || e));
   } finally {
-    btn.disabled = false; btn.textContent = 'Creer mon compte';
+    btn.disabled = false; btn.textContent = 'Créer mon compte';
   }
 }
 $('form-signup').addEventListener('submit', doSignup);
@@ -586,7 +586,7 @@ function computeRanking() {
 
 // ===== DASHBOARD =====
 function renderDashboard() {
-  $('current-month').textContent = 'Classement . ' + monthLabel();
+  $('current-month').textContent = 'Classement · ' + monthLabel();
   $('home-avatar').textContent = initials(me.full_name);
   const ranking = computeRanking();
   const worst = ranking[0];
@@ -594,7 +594,7 @@ function renderDashboard() {
   if (worst && (worst.points > 0 || worst.chocos > 0)) {
     heroEl.classList.remove('hero-empty');
     $('hero-title').textContent = worst.name;
-    $('hero-sub').textContent = worst.points + ' pts' + (worst.chocos ? ' . ' + worst.chocos + ' choco(s)' : '') + ' . Equipe ' + worst.team_label;
+    $('hero-sub').textContent = worst.points + ' pts' + (worst.chocos ? ' · ' + worst.chocos + ' choco(s)' : '') + ' · Équipe ' + worst.team_label;
   } else {
     heroEl.classList.add('hero-empty');
     $('hero-title').textContent = 'Personne encore';
@@ -606,7 +606,7 @@ function renderDashboard() {
     const my = ranking.find(r => r.member_id === me.member_id);
     if (my) {
       const msg = my.chocos ? '&#127851; ' + my.chocos + ' choco direct' : (my.points >= 5 ? 'Seuil choco atteint' : 'Tout va bien');
-      wrap.innerHTML = '<div class="mycard"><div class="hero-label">Mes points . ' + esc(monthLabel()) + '</div><div class="hero-title">' + my.points + ' pts</div><div class="hero-sub" style="color:var(--ink-soft)">' + msg + '</div></div>';
+      wrap.innerHTML = '<div class="mycard"><div class="hero-label">Mes points · ' + esc(monthLabel()) + '</div><div class="hero-title">' + my.points + ' pts</div><div class="hero-sub" style="color:var(--ink-soft)">' + msg + '</div></div>';
     } else {
       wrap.innerHTML = '';
     }
@@ -625,7 +625,7 @@ function renderDashboard() {
       if (isMe) classes.push('me');
       if (isWorst) classes.push('worst');
       const prefix = isWorst ? '&#128128; ' : (i === ranking.length - 1 && r.points === 0 ? '&#128519; ' : '');
-      return '<div class="' + classes.join(' ') + '"><div class="rank-pos ' + (i === 0 ? 'top' : '') + '">' + (i + 1) + '</div><div class="rank-name">' + prefix + esc(r.name) + '<span class="rank-team">Equipe ' + esc(r.team_label) + '</span></div><div class="rank-pts ' + (r.is_choco ? 'danger' : '') + '">' + r.points + ' pts' + (r.chocos ? ' &#127851;' : '') + '</div></div>';
+      return '<div class="' + classes.join(' ') + '"><div class="rank-pos ' + (i === 0 ? 'top' : '') + '">' + (i + 1) + '</div><div class="rank-name">' + prefix + esc(r.name) + '<span class="rank-team">Équipe ' + esc(r.team_label) + '</span></div><div class="rank-pts ' + (r.is_choco ? 'danger' : '') + '">' + r.points + ' pts' + (r.chocos ? ' &#127851;' : '') + '</div></div>';
     }).join('');
   }
 
@@ -640,7 +640,7 @@ function renderProfile() {
   $('profile-name').textContent = me.full_name || '-';
   const team = teams.find(t => t.id === me.team_id);
   const roleLabel = me.role === 'owner' ? 'Owner' : me.role === 'chef' ? 'Chef' : 'Jockey';
-  $('profile-sub').textContent = roleLabel + ' . Equipe ' + (team && team.chef_label ? team.chef_label : '-');
+  $('profile-sub').textContent = roleLabel + ' · Équipe ' + (team && team.chef_label ? team.chef_label : '-');
   const ranking = computeRanking();
   const my = ranking.find(r => r.member_id === me.member_id);
   $('profile-points').textContent = my ? my.points : 0;
@@ -653,13 +653,13 @@ function renderProfile() {
     } else {
       hist.innerHTML = mySanctions.map(s => {
         const inf = infractions.find(i => i.id === s.infraction_id);
-        const label = (inf && inf.label) || '(supprimee)';
+        const label = (inf && inf.label) || '(supprimée)';
         const date = new Date(s.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
         return '<div class="rank-item"><div class="rank-name">' + esc(label) + '<span class="rank-team">' + esc(date) + '</span></div><div class="rank-pts ' + (s.choco_direct_snapshot ? 'danger' : '') + '">' + (s.choco_direct_snapshot ? '&#127851;' : (s.points_snapshot + ' pts')) + '</div></div>';
       }).join('');
     }
   } else {
-    hist.innerHTML = '<div class="empty">Pas de fiche jockey associee.</div>';
+    hist.innerHTML = '<div class="empty">Pas de fiche jockey associée.</div>';
   }
 
   $('btn-admin').style.display = me.role === 'owner' ? 'block' : 'none';
@@ -678,13 +678,13 @@ async function renderAdmin() {
     const team = teams.find(t => t.id === p.team_id);
     const isMe = p.id === me.id;
     const teamLabel = (team && team.chef_label) || '-';
-    const roleButtons = isMe ? '<div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:center;padding:6px">Toi-meme</div>' :
+    const roleButtons = isMe ? '<div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:center;padding:6px">Toi-même</div>' :
       '<div class="role-btns">' +
         '<button type="button" class="role-btn ' + (p.role === 'jockey' ? 'sel-jockey' : '') + '" data-id="' + esc(p.id) + '" data-role="jockey">Jockey</button>' +
         '<button type="button" class="role-btn ' + (p.role === 'chef' ? 'sel-chef' : '') + '" data-id="' + esc(p.id) + '" data-role="chef">Chef</button>' +
         '<button type="button" class="role-btn ' + (p.role === 'owner' ? 'sel-owner' : '') + '" data-id="' + esc(p.id) + '" data-role="owner">Owner</button>' +
       '</div>';
-    return '<div class="admin-row"><div class="admin-row-head"><div class="avatar-sm">' + esc(initials(p.full_name)) + '</div><div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Equipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + roleButtons + '</div>';
+    return '<div class="admin-row"><div class="admin-row-head"><div class="avatar-sm">' + esc(initials(p.full_name)) + '</div><div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Équipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + roleButtons + '</div>';
   }).join('');
 
   document.querySelectorAll('#admin-list .role-btn').forEach(btn => {
@@ -705,12 +705,12 @@ function openSanctionFlow() {
   if (me.role === 'chef') list = members.filter(m => m.team_id === me.team_id);
   const box = $('members-list');
   if (list.length === 0) {
-    box.innerHTML = '<div class="empty">Aucun jockey dans ton equipe.</div>';
+    box.innerHTML = '<div class="empty">Aucun jockey dans ton équipe.</div>';
   } else {
     box.innerHTML = list.map(m => {
       const team = teams.find(t => t.id === m.team_id);
       const teamLabel = (team && team.chef_label) || '-';
-      return '<button type="button" class="list-btn pick-member" data-id="' + esc(m.id) + '"><div class="profile-avatar" style="width:36px;height:36px;font-size:13px;margin:0">' + esc(initials(m.full_name)) + '</div><div class="lb-main">' + esc(m.full_name) + '<span class="lb-sub">Equipe ' + esc(teamLabel) + '</span></div></button>';
+      return '<button type="button" class="list-btn pick-member" data-id="' + esc(m.id) + '"><div class="profile-avatar" style="width:36px;height:36px;font-size:13px;margin:0">' + esc(initials(m.full_name)) + '</div><div class="lb-main">' + esc(m.full_name) + '<span class="lb-sub">Équipe ' + esc(teamLabel) + '</span></div></button>';
     }).join('');
     document.querySelectorAll('.pick-member').forEach(b => {
       b.addEventListener('click', () => {
@@ -726,7 +726,7 @@ function openSanctionFlow() {
 function openInfractionSheet() {
   const box = $('infractions-list');
   if (!infractions.length) {
-    box.innerHTML = '<div class="empty">Aucune infraction configuree.</div>';
+    box.innerHTML = '<div class="empty">Aucune infraction configurée.</div>';
   } else {
     box.innerHTML = infractions.map(i =>
       '<button type="button" class="list-btn pick-infraction" data-id="' + esc(i.id) + '"><div class="lb-main">' + esc(i.label) + '</div><div class="lb-pts ' + (i.choco_direct ? 'choco' : '') + '">' + (i.choco_direct ? '&#127851;' : (i.points + ' pts')) + '</div></button>'
@@ -767,17 +767,17 @@ async function openCorrectFlow() {
     list = list.filter(s => teamMemberIds.has(s.member_id));
   }
   if (list.length === 0) {
-    box.innerHTML = '<div class="empty"><div class="empty-emoji">&#10024;</div>Aucune sanction a corriger.</div>';
+    box.innerHTML = '<div class="empty"><div class="empty-emoji">&#10024;</div>Aucune sanction à corriger.</div>';
   } else {
     box.innerHTML = list.map(s => {
       const m = members.find(mm => mm.id === s.member_id);
       const inf = infractions.find(i => i.id === s.infraction_id);
       const date = new Date(s.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-      return '<div class="rank-item" style="flex-direction:column;align-items:stretch;gap:10px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="rank-name">' + esc((m && m.full_name) || '(inconnu)') + '<span class="rank-team">' + esc((inf && inf.label) || '(supprimee)') + ' . ' + esc(date) + '</span></div><div class="rank-pts ' + (s.choco_direct_snapshot ? 'danger' : '') + '">' + (s.choco_direct_snapshot ? '&#127851;' : (s.points_snapshot + ' pts')) + '</div></div><button type="button" class="btn-danger del-sanction" data-id="' + esc(s.id) + '" style="margin:0;padding:12px;font-size:13px">Annuler cette sanction</button></div>';
+      return '<div class="rank-item" style="flex-direction:column;align-items:stretch;gap:10px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="rank-name">' + esc((m && m.full_name) || '(inconnu)') + '<span class="rank-team">' + esc((inf && inf.label) || '(supprimée)') + ' · ' + esc(date) + '</span></div><div class="rank-pts ' + (s.choco_direct_snapshot ? 'danger' : '') + '">' + (s.choco_direct_snapshot ? '&#127851;' : (s.points_snapshot + ' pts')) + '</div></div><button type="button" class="btn-danger del-sanction" data-id="' + esc(s.id) + '" style="margin:0;padding:12px;font-size:13px">Annuler cette sanction</button></div>';
     }).join('');
     document.querySelectorAll('.del-sanction').forEach(b => {
       b.addEventListener('click', async () => {
-        if (!confirm('Supprimer cette sanction ? Les points seront retires.')) return;
+        if (!confirm('Supprimer cette sanction ? Les points seront retirés.')) return;
         b.disabled = true; b.textContent = 'Suppression...';
         const { error } = await sb.from('sanctions').delete().eq('id', b.dataset.id);
         if (error) { alert('Erreur : ' + error.message); b.disabled = false; b.textContent = 'Annuler cette sanction'; return; }
@@ -799,7 +799,7 @@ document.querySelectorAll('.sheet').forEach(s => {
 // ===== INIT =====
 (async () => {
   try {
-    bootStatus.textContent = 'Preparation...';
+    bootStatus.textContent = 'Préparation...';
     await loadTeamsForSignup();
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
@@ -810,7 +810,7 @@ document.querySelectorAll('.sheet').forEach(s => {
     }
   } catch (e) {
     console.error('Init error', e);
-    bootError('Erreur de demarrage : ' + (e.message || e));
+    bootError('Erreur de démarrage : ' + (e.message || e));
   }
 })();
 </script>
