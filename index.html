@@ -231,6 +231,13 @@ a { color: inherit; text-decoration: none; }
 .photo-actions .btn-photo { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; padding: 8px 14px; background: rgba(255,255,255,0.12); color: var(--white); border-radius: 20px; font-weight: 600; transition: .15s; }
 .photo-actions .btn-photo:active { background: rgba(255,255,255,0.2); }
 
+.avatar-cam { position: absolute; bottom: -3px; right: -3px; width: 18px; height: 18px; border-radius: 50%; background: var(--white); color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none; }
+.topbar .avatar { overflow: visible; position: relative; }
+.topbar .avatar .avatar-photo { border-radius: 50%; }
+
+.admin-photo-btn { display: block; width: 100%; padding: 12px 14px; background: var(--cream-2); color: var(--ink); border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; transition: .15s; text-align: center; }
+.admin-photo-btn:active { background: var(--cream); transform: scale(0.985); border-color: var(--red); }
+
 /* ============ POSTER ============ */
 #screen-poster { background: var(--cream); }
 #screen-poster .topbar { background: var(--ink); }
@@ -273,6 +280,9 @@ a { color: inherit; text-decoration: none; }
   <div class="boot-status" id="boot-status">Chargement...</div>
 </div>
 
+<input type="file" id="photo-input" accept="image/*" capture="user" style="position:fixed;left:-9999px;opacity:0;pointer-events:none">
+<input type="file" id="admin-photo-input" accept="image/*" style="position:fixed;left:-9999px;opacity:0;pointer-events:none">
+
 <!-- AUTH -->
 <div class="screen" id="screen-auth">
   <div class="auth">
@@ -310,7 +320,8 @@ a { color: inherit; text-decoration: none; }
   <div class="topbar">
     <div class="logo">TEA<span class="c">CHOCO</span></div>
     <button type="button" class="back" id="btn-poster-link" title="Le pire jockey" style="font-size:22px;padding:0 10px">&#9876;</button>
-    <div class="avatar" id="home-avatar" data-nav="profile">?</div>
+    <button type="button" class="back" id="btn-profile-link" title="Mon profil" style="font-size:22px;padding:0 8px">&#128100;</button>
+    <div class="avatar avatar-wrap" id="home-avatar" title="Changer ma photo">?<div class="avatar-cam">&#128247;</div></div>
   </div>
   <div class="content">
     <div class="hero" id="hero-card">
@@ -341,7 +352,6 @@ a { color: inherit; text-decoration: none; }
       <div class="photo-actions" id="photo-actions" style="display:none">
         <button type="button" class="btn-photo" id="btn-photo-pick">&#128247; Changer ma photo</button>
       </div>
-      <input type="file" id="photo-input" accept="image/*" style="display:none">
     </div>
     <div class="section-title">Mon historique<span class="mono">Ce mois</span></div>
     <div id="my-history" class="rank-list"><div class="empty"><div class="empty-emoji">&#128519;</div>Aucune infraction ce mois.</div></div>
@@ -381,7 +391,6 @@ a { color: inherit; text-decoration: none; }
   <div class="content">
     <div class="section-title">Membres inscrits<span class="mono">Attribuer les r&ocirc;les</span></div>
     <div id="admin-list" class="rank-list"><div class="loader">Chargement...</div></div>
-    <input type="file" id="admin-photo-input" accept="image/*" style="display:none">
   </div>
 </div>
 
@@ -675,11 +684,13 @@ function renderDashboard() {
   $('current-month').textContent = 'Classement · ' + monthLabel();
   const myMember = members.find(m => m.id === me.member_id);
   const homeAv = $('home-avatar');
+  const camIcon = me.member_id ? '<div class="avatar-cam">&#128247;</div>' : '';
   if (myMember && myMember.photo_url) {
-    homeAv.innerHTML = '<img class="avatar-photo" src="' + esc(myMember.photo_url) + '" alt="">';
+    homeAv.innerHTML = '<img class="avatar-photo" src="' + esc(myMember.photo_url) + '" alt="">' + camIcon;
   } else {
-    homeAv.textContent = initials(me.full_name);
+    homeAv.innerHTML = esc(initials(me.full_name)) + camIcon;
   }
+  homeAv.title = me.member_id ? 'Changer ma photo' : 'Mon compte';
   const ranking = computeRanking();
   const worst = ranking[0];
   const heroEl = $('hero-card');
@@ -805,8 +816,8 @@ async function renderAdmin() {
         '<button type="button" class="role-btn ' + (p.role === 'owner' ? 'sel-owner' : '') + '" data-id="' + esc(p.id) + '" data-role="owner">Owner</button>' +
       '</div>';
     const photoRow = p.member_id
-      ? '<button type="button" class="btn-photo admin-photo-btn" data-member-id="' + esc(p.member_id) + '" style="background:var(--cream-2);color:var(--ink);align-self:flex-start">&#128247; ' + (photoUrl ? 'Changer la photo' : 'Ajouter une photo') + '</button>'
-      : '<div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);text-align:center;padding:4px">Aucune fiche jockey · photo impossible</div>';
+      ? '<button type="button" class="admin-photo-btn" data-member-id="' + esc(p.member_id) + '">&#128247; ' + (photoUrl ? 'Changer la photo' : 'Ajouter une photo') + '</button>'
+      : '<div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);text-align:center;padding:4px">Aucune fiche jockey &middot; photo impossible</div>';
     return '<div class="admin-row"><div class="admin-row-head">' + avatarBlock + '<div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Équipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + photoRow + roleButtons + '</div>';
   }).join('');
 
@@ -1011,7 +1022,19 @@ $('photo-input').addEventListener('change', async (e) => {
 });
 
 $('btn-poster-link').addEventListener('click', () => showScreen('poster'));
+$('btn-profile-link').addEventListener('click', () => showScreen('profile'));
 $('btn-poster-print').addEventListener('click', () => window.print());
+
+// Topbar avatar tap: change my photo directly (or fallback to profile/admin)
+$('home-avatar').addEventListener('click', () => {
+  if (me && me.member_id) {
+    $('photo-input').click();
+  } else if (me && me.role === 'owner') {
+    showScreen('admin');
+  } else {
+    showScreen('profile');
+  }
+});
 
 // Close sheet on backdrop click
 document.querySelectorAll('.sheet').forEach(s => {
