@@ -787,7 +787,7 @@ async function renderAdmin() {
   if (me.role !== 'owner') { showScreen('home'); return; }
   const list = $('admin-list');
   list.innerHTML = '<div class="loader">Chargement...</div>';
-  const { data: profiles, error } = await sb.from('profiles').select('id, full_name, role, team_id, active, member_id').order('full_name');
+  const { data: profiles, error } = await sb.from('profiles').select('id, full_name, role, team_id, active, member_id').eq('active', true).order('full_name');
   if (error) { list.innerHTML = '<div class="empty">Erreur : ' + esc(error.message) + '</div>'; return; }
 
   list.innerHTML = profiles.map(p => {
