@@ -217,6 +217,48 @@ a { color: inherit; text-decoration: none; }
 .boot-overlay .boot-status { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-dim); margin-top: 8px; }
 .boot-overlay.error .boot-status { color: var(--red-dark); }
 
+/* ============ PHOTOS ============ */
+.avatar-photo { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+.avatar-wrap { position: relative; }
+.profile-avatar.has-photo { padding: 0; overflow: hidden; }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-sm.has-photo { padding: 0; overflow: hidden; }
+.rank-photo { width: 38px; height: 38px; border-radius: 50%; background: var(--cream-2); color: var(--ink-soft); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; font-family: var(--display); flex-shrink: 0; overflow: hidden; }
+.rank-photo img { width: 100%; height: 100%; object-fit: cover; }
+.rank-item.worst .rank-photo { background: rgba(255,255,255,0.15); color: var(--white); }
+
+.photo-actions { display: flex; gap: 8px; justify-content: center; margin-top: 14px; position: relative; z-index: 2; }
+.photo-actions .btn-photo { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; padding: 8px 14px; background: rgba(255,255,255,0.12); color: var(--white); border-radius: 20px; font-weight: 600; transition: .15s; }
+.photo-actions .btn-photo:active { background: rgba(255,255,255,0.2); }
+
+/* ============ POSTER ============ */
+#screen-poster { background: var(--cream); }
+#screen-poster .topbar { background: var(--ink); }
+.poster-content { padding: 30px 22px calc(40px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.poster-stage { background: var(--white); border-radius: var(--radius); padding: 32px 24px 36px; width: 100%; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 18px; position: relative; overflow: hidden; }
+.poster-stage::before { content: ''; position: absolute; top: -40%; left: -30%; width: 70%; height: 70%; background: radial-gradient(circle, rgba(220,31,46,0.12) 0%, transparent 60%); pointer-events: none; }
+.poster-stage::after { content: ''; position: absolute; bottom: -40%; right: -30%; width: 70%; height: 70%; background: radial-gradient(circle, rgba(220,31,46,0.08) 0%, transparent 60%); pointer-events: none; }
+.poster-tag { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--ink-soft); position: relative; z-index: 1; }
+.poster-circle { width: 220px; height: 220px; border-radius: 50%; background: var(--cream-2); display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 900; font-size: 78px; color: var(--ink-soft); border: 6px solid var(--red); box-shadow: 0 16px 40px rgba(220,31,46,0.35); overflow: hidden; position: relative; z-index: 1; }
+.poster-circle img { width: 100%; height: 100%; object-fit: cover; }
+.poster-title { font-family: var(--display); font-weight: 900; font-style: italic; color: var(--red); font-size: 44px; line-height: 0.95; letter-spacing: -0.02em; text-align: center; position: relative; z-index: 1; }
+.poster-name { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -0.02em; text-align: center; position: relative; z-index: 1; }
+.poster-meta { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-soft); text-align: center; position: relative; z-index: 1; }
+.poster-meta .pts { color: var(--red); font-weight: 700; }
+.poster-empty { text-align: center; color: var(--text-dim); padding: 50px 20px; }
+.poster-actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+
+@media print {
+  body { background: white !important; padding: 0 !important; }
+  .topbar, .poster-actions, .poster-tag, .fab, .boot-overlay { display: none !important; }
+  .screen { max-width: none !important; min-height: 0 !important; box-shadow: none !important; border-radius: 0 !important; }
+  .poster-content { padding: 0 !important; }
+  .poster-stage { box-shadow: none !important; border: none !important; padding: 40px !important; }
+  .poster-stage::before, .poster-stage::after { display: none !important; }
+  .poster-circle { box-shadow: none !important; width: 280px !important; height: 280px !important; }
+  .poster-title { font-size: 64px !important; }
+}
+
 @media (min-width: 700px) {
   body { display: flex; justify-content: center; align-items: center; padding: 24px; }
   .screen { max-width: 460px; width: 100%; min-height: 880px; max-height: calc(100dvh - 48px); border-radius: 36px; overflow: hidden; box-shadow: 0 40px 80px rgba(10,9,7,0.15), 0 0 0 1px var(--border); }
@@ -267,6 +309,7 @@ a { color: inherit; text-decoration: none; }
 <div class="screen" id="screen-home">
   <div class="topbar">
     <div class="logo">TEA<span class="c">CHOCO</span></div>
+    <button type="button" class="back" id="btn-poster-link" title="Le pire jockey" style="font-size:22px;padding:0 10px">&#9876;</button>
     <div class="avatar" id="home-avatar" data-nav="profile">?</div>
   </div>
   <div class="content">
@@ -290,17 +333,42 @@ a { color: inherit; text-decoration: none; }
   </div>
   <div class="content">
     <div class="profile-card">
-      <div class="profile-avatar" id="profile-avatar">?</div>
+      <div class="profile-avatar avatar-wrap" id="profile-avatar">?</div>
       <div class="profile-name" id="profile-name">-</div>
       <div class="profile-sub" id="profile-sub">-</div>
       <div class="profile-points" id="profile-points">0</div>
       <div class="profile-points-label">points ce mois</div>
+      <div class="photo-actions" id="photo-actions" style="display:none">
+        <button type="button" class="btn-photo" id="btn-photo-pick">&#128247; Changer ma photo</button>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" style="display:none">
     </div>
     <div class="section-title">Mon historique<span class="mono">Ce mois</span></div>
     <div id="my-history" class="rank-list"><div class="empty"><div class="empty-emoji">&#128519;</div>Aucune infraction ce mois.</div></div>
     <button type="button" class="btn-secondary" id="btn-correct" style="display:none">&#128465; Corriger une sanction</button>
     <button type="button" class="btn-secondary" id="btn-admin" style="display:none">&#9881; G&eacute;rer l'&eacute;quipe</button>
     <button type="button" class="btn-danger" id="btn-logout">Se d&eacute;connecter</button>
+  </div>
+</div>
+
+<!-- POSTER -->
+<div class="screen" id="screen-poster">
+  <div class="topbar">
+    <button type="button" class="back" data-nav="home">&lsaquo;</button>
+    <div class="logo">Le Pire Jockey</div>
+  </div>
+  <div class="poster-content">
+    <div class="poster-stage" id="poster-stage">
+      <div class="poster-tag">Affiche du mois</div>
+      <div class="poster-circle" id="poster-circle">?</div>
+      <div class="poster-title">LE PIRE<br>JOCKEY</div>
+      <div class="poster-name" id="poster-name">-</div>
+      <div class="poster-meta" id="poster-meta">-</div>
+    </div>
+    <div class="poster-actions">
+      <button type="button" class="btn-primary" id="btn-poster-print">&#128424; Imprimer / Enregistrer</button>
+      <button type="button" class="btn-secondary" data-nav="home">Retour</button>
+    </div>
   </div>
 </div>
 
@@ -408,6 +476,7 @@ function showScreen(name) {
   if (name === 'home') renderDashboard();
   if (name === 'profile') renderProfile();
   if (name === 'admin') renderAdmin();
+  if (name === 'poster') renderPoster();
   window.scrollTo(0, 0);
 }
 
@@ -544,7 +613,7 @@ async function loadAll() {
   try {
     const [tRes, mRes, iRes, sRes] = await Promise.all([
       sb.from('teams').select('id, name, chef_label').order('chef_label'),
-      sb.from('members').select('id, full_name, team_id, active').eq('active', true),
+      sb.from('members').select('id, full_name, team_id, active, photo_url').eq('active', true),
       sb.from('infractions').select('id, label, points, choco_direct, sort_order').eq('active', true).order('choco_direct', { ascending: false }).order('points', { ascending: false }).order('sort_order'),
       sb.from('sanctions').select('id, member_id, infraction_id, points_snapshot, choco_direct_snapshot, author_id, created_at').gte('created_at', monthStart()).order('created_at', { ascending: false })
     ]);
@@ -557,44 +626,70 @@ async function loadAll() {
   }
 }
 
-// ===== RANKING =====
+// ===== RANKING (seuil 5 pts = 1 choco + reset rolling) =====
 function computeRanking() {
   const totals = new Map();
-  members.forEach(m => totals.set(m.id, { points: 0, chocos: 0 }));
+  members.forEach(m => totals.set(m.id, { rawPoints: 0, directChocos: 0 }));
   sanctions.forEach(s => {
     const t = totals.get(s.member_id);
     if (!t) return;
-    t.points += s.points_snapshot || 0;
-    if (s.choco_direct_snapshot) t.chocos += 1;
+    t.rawPoints += s.points_snapshot || 0;
+    if (s.choco_direct_snapshot) t.directChocos += 1;
   });
   const rows = members.map(m => {
-    const t = totals.get(m.id) || { points: 0, chocos: 0 };
+    const t = totals.get(m.id) || { rawPoints: 0, directChocos: 0 };
     const team = teams.find(tt => tt.id === m.team_id);
+    const triggeredChocos = Math.floor(t.rawPoints / 5);
+    const cyclePoints = t.rawPoints % 5;
+    const totalChocos = t.directChocos + triggeredChocos;
+    const severity = t.rawPoints + t.directChocos * 5;
     return {
       member_id: m.id,
       name: m.full_name,
+      photo_url: m.photo_url || null,
       team_label: (team && team.chef_label) || '-',
       team_id: m.team_id,
-      points: t.points,
-      chocos: t.chocos,
-      is_choco: t.chocos > 0 || t.points >= 5
+      raw_points: t.rawPoints,
+      cycle_points: cyclePoints,
+      direct_chocos: t.directChocos,
+      triggered_chocos: triggeredChocos,
+      total_chocos: totalChocos,
+      severity: severity,
+      is_choco: totalChocos > 0
     };
   });
-  rows.sort((a, b) => (b.chocos - a.chocos) || (b.points - a.points) || a.name.localeCompare(b.name));
+  rows.sort((a, b) => (b.severity - a.severity) || (b.total_chocos - a.total_chocos) || a.name.localeCompare(b.name));
   return rows;
+}
+
+function avatarMarkup(name, photoUrl, sizeClass) {
+  const cls = sizeClass || 'rank-photo';
+  const ini = esc(initials(name));
+  if (photoUrl) return '<div class="' + cls + '"><img src="' + esc(photoUrl) + '" alt=""></div>';
+  return '<div class="' + cls + '">' + ini + '</div>';
 }
 
 // ===== DASHBOARD =====
 function renderDashboard() {
   $('current-month').textContent = 'Classement · ' + monthLabel();
-  $('home-avatar').textContent = initials(me.full_name);
+  const myMember = members.find(m => m.id === me.member_id);
+  const homeAv = $('home-avatar');
+  if (myMember && myMember.photo_url) {
+    homeAv.innerHTML = '<img class="avatar-photo" src="' + esc(myMember.photo_url) + '" alt="">';
+  } else {
+    homeAv.textContent = initials(me.full_name);
+  }
   const ranking = computeRanking();
   const worst = ranking[0];
   const heroEl = $('hero-card');
-  if (worst && (worst.points > 0 || worst.chocos > 0)) {
+  if (worst && worst.severity > 0) {
     heroEl.classList.remove('hero-empty');
     $('hero-title').textContent = worst.name;
-    $('hero-sub').textContent = worst.points + ' pts' + (worst.chocos ? ' · ' + worst.chocos + ' choco(s)' : '') + ' · Équipe ' + worst.team_label;
+    const parts = [];
+    if (worst.total_chocos) parts.push(worst.total_chocos + ' choco' + (worst.total_chocos > 1 ? 's' : ''));
+    parts.push(worst.cycle_points + '/5 pts');
+    parts.push('Équipe ' + worst.team_label);
+    $('hero-sub').textContent = parts.join(' · ');
   } else {
     heroEl.classList.add('hero-empty');
     $('hero-title').textContent = 'Personne encore';
@@ -602,11 +697,14 @@ function renderDashboard() {
   }
 
   const wrap = $('my-card-wrapper');
-  if (me.role === 'jockey' && me.member_id) {
+  if (me.member_id) {
     const my = ranking.find(r => r.member_id === me.member_id);
     if (my) {
-      const msg = my.chocos ? '&#127851; ' + my.chocos + ' choco direct' : (my.points >= 5 ? 'Seuil choco atteint' : 'Tout va bien');
-      wrap.innerHTML = '<div class="mycard"><div class="hero-label">Mes points · ' + esc(monthLabel()) + '</div><div class="hero-title">' + my.points + ' pts</div><div class="hero-sub" style="color:var(--ink-soft)">' + msg + '</div></div>';
+      let msg;
+      if (my.total_chocos > 0) msg = '&#127851; ' + my.total_chocos + ' choco' + (my.total_chocos > 1 ? 's' : '') + ' · cycle ' + my.cycle_points + '/5';
+      else if (my.cycle_points >= 3) msg = 'Attention : ' + my.cycle_points + '/5 vers le choco';
+      else msg = my.cycle_points === 0 ? 'Tout va bien' : my.cycle_points + '/5 pts';
+      wrap.innerHTML = '<div class="mycard"><div class="hero-label">Mes points · ' + esc(monthLabel()) + '</div><div class="hero-title">' + my.cycle_points + ' / 5</div><div class="hero-sub" style="color:var(--ink-soft)">' + msg + '</div></div>';
     } else {
       wrap.innerHTML = '';
     }
@@ -620,12 +718,13 @@ function renderDashboard() {
   } else {
     list.innerHTML = ranking.map((r, i) => {
       const isMe = me.member_id === r.member_id;
-      const isWorst = i === 0 && (r.points > 0 || r.chocos > 0);
+      const isWorst = i === 0 && r.severity > 0;
       const classes = ['rank-item'];
       if (isMe) classes.push('me');
       if (isWorst) classes.push('worst');
-      const prefix = isWorst ? '&#128128; ' : (i === ranking.length - 1 && r.points === 0 ? '&#128519; ' : '');
-      return '<div class="' + classes.join(' ') + '"><div class="rank-pos ' + (i === 0 ? 'top' : '') + '">' + (i + 1) + '</div><div class="rank-name">' + prefix + esc(r.name) + '<span class="rank-team">Équipe ' + esc(r.team_label) + '</span></div><div class="rank-pts ' + (r.is_choco ? 'danger' : '') + '">' + r.points + ' pts' + (r.chocos ? ' &#127851;' : '') + '</div></div>';
+      const prefix = isWorst ? '&#128128; ' : (i === ranking.length - 1 && r.severity === 0 ? '&#128519; ' : '');
+      const ptsLabel = r.total_chocos ? (r.total_chocos + ' &#127851; · ' + r.cycle_points + '/5') : (r.cycle_points + ' pts');
+      return '<div class="' + classes.join(' ') + '">' + avatarMarkup(r.name, r.photo_url, 'rank-photo') + '<div class="rank-pos ' + (i === 0 ? 'top' : '') + '">' + (i + 1) + '</div><div class="rank-name">' + prefix + esc(r.name) + '<span class="rank-team">Équipe ' + esc(r.team_label) + '</span></div><div class="rank-pts ' + (r.is_choco ? 'danger' : '') + '">' + ptsLabel + '</div></div>';
     }).join('');
   }
 
@@ -636,14 +735,30 @@ function renderDashboard() {
 
 // ===== PROFILE =====
 function renderProfile() {
-  $('profile-avatar').textContent = initials(me.full_name);
+  const av = $('profile-avatar');
+  const myMember = members.find(m => m.id === me.member_id);
+  if (myMember && myMember.photo_url) {
+    av.classList.add('has-photo');
+    av.innerHTML = '<img src="' + esc(myMember.photo_url) + '" alt="">';
+  } else {
+    av.classList.remove('has-photo');
+    av.textContent = initials(me.full_name);
+  }
   $('profile-name').textContent = me.full_name || '-';
   const team = teams.find(t => t.id === me.team_id);
   const roleLabel = me.role === 'owner' ? 'Owner' : me.role === 'chef' ? 'Chef' : 'Jockey';
   $('profile-sub').textContent = roleLabel + ' · Équipe ' + (team && team.chef_label ? team.chef_label : '-');
   const ranking = computeRanking();
   const my = ranking.find(r => r.member_id === me.member_id);
-  $('profile-points').textContent = my ? my.points : 0;
+  if (my) {
+    $('profile-points').innerHTML = my.cycle_points + '<span style="font-size:32px;opacity:.5"> / 5</span>';
+    const lblEl = document.querySelector('.profile-points-label');
+    if (lblEl) lblEl.textContent = my.total_chocos ? (my.total_chocos + ' choco(s) · cycle en cours') : 'points dans le cycle';
+  } else {
+    $('profile-points').textContent = '0';
+  }
+
+  $('photo-actions').style.display = me.member_id ? 'flex' : 'none';
 
   const hist = $('my-history');
   if (me.member_id) {
@@ -671,20 +786,24 @@ async function renderAdmin() {
   if (me.role !== 'owner') { showScreen('home'); return; }
   const list = $('admin-list');
   list.innerHTML = '<div class="loader">Chargement...</div>';
-  const { data: profiles, error } = await sb.from('profiles').select('id, full_name, role, team_id, active').order('full_name');
+  const { data: profiles, error } = await sb.from('profiles').select('id, full_name, role, team_id, active, member_id').order('full_name');
   if (error) { list.innerHTML = '<div class="empty">Erreur : ' + esc(error.message) + '</div>'; return; }
 
   list.innerHTML = profiles.map(p => {
     const team = teams.find(t => t.id === p.team_id);
     const isMe = p.id === me.id;
     const teamLabel = (team && team.chef_label) || '-';
+    const photoUrl = (p.member_id ? (members.find(m => m.id === p.member_id) || {}).photo_url : null) || null;
+    const avatarBlock = photoUrl
+      ? '<div class="avatar-sm has-photo"><img class="avatar-photo" src="' + esc(photoUrl) + '" alt=""></div>'
+      : '<div class="avatar-sm">' + esc(initials(p.full_name)) + '</div>';
     const roleButtons = isMe ? '<div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:center;padding:6px">Toi-même</div>' :
       '<div class="role-btns">' +
         '<button type="button" class="role-btn ' + (p.role === 'jockey' ? 'sel-jockey' : '') + '" data-id="' + esc(p.id) + '" data-role="jockey">Jockey</button>' +
         '<button type="button" class="role-btn ' + (p.role === 'chef' ? 'sel-chef' : '') + '" data-id="' + esc(p.id) + '" data-role="chef">Chef</button>' +
         '<button type="button" class="role-btn ' + (p.role === 'owner' ? 'sel-owner' : '') + '" data-id="' + esc(p.id) + '" data-role="owner">Owner</button>' +
       '</div>';
-    return '<div class="admin-row"><div class="admin-row-head"><div class="avatar-sm">' + esc(initials(p.full_name)) + '</div><div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Équipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + roleButtons + '</div>';
+    return '<div class="admin-row"><div class="admin-row-head">' + avatarBlock + '<div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Équipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + roleButtons + '</div>';
   }).join('');
 
   document.querySelectorAll('#admin-list .role-btn').forEach(btn => {
@@ -710,7 +829,7 @@ function openSanctionFlow() {
     box.innerHTML = list.map(m => {
       const team = teams.find(t => t.id === m.team_id);
       const teamLabel = (team && team.chef_label) || '-';
-      return '<button type="button" class="list-btn pick-member" data-id="' + esc(m.id) + '"><div class="profile-avatar" style="width:36px;height:36px;font-size:13px;margin:0">' + esc(initials(m.full_name)) + '</div><div class="lb-main">' + esc(m.full_name) + '<span class="lb-sub">Équipe ' + esc(teamLabel) + '</span></div></button>';
+      return '<button type="button" class="list-btn pick-member" data-id="' + esc(m.id) + '">' + avatarMarkup(m.full_name, m.photo_url, 'rank-photo') + '<div class="lb-main">' + esc(m.full_name) + '<span class="lb-sub">Équipe ' + esc(teamLabel) + '</span></div></button>';
     }).join('');
     document.querySelectorAll('.pick-member').forEach(b => {
       b.addEventListener('click', () => {
@@ -790,6 +909,72 @@ async function openCorrectFlow() {
   }
   sheet.classList.add('active');
 }
+
+// ===== POSTER =====
+function renderPoster() {
+  const ranking = computeRanking();
+  const worst = ranking.find(r => r.severity > 0) || null;
+  const circle = $('poster-circle');
+  const name = $('poster-name');
+  const meta = $('poster-meta');
+  if (!worst) {
+    circle.innerHTML = '&#128519;';
+    name.textContent = 'Personne (encore)';
+    meta.innerHTML = 'Aucune infraction · ' + esc(monthLabel());
+    return;
+  }
+  if (worst.photo_url) {
+    circle.innerHTML = '<img src="' + esc(worst.photo_url) + '" alt="">';
+  } else {
+    circle.textContent = initials(worst.name);
+  }
+  name.textContent = worst.name;
+  const chocoStr = worst.total_chocos ? worst.total_chocos + ' choco' + (worst.total_chocos > 1 ? 's' : '') : '';
+  const ptsStr = worst.cycle_points + '/5 pts';
+  const parts = [];
+  if (chocoStr) parts.push('<span class="pts">' + chocoStr + '</span>');
+  parts.push(ptsStr);
+  parts.push('Équipe ' + esc(worst.team_label));
+  meta.innerHTML = parts.join(' · ') + '<br>' + esc(monthLabel());
+}
+
+// ===== PHOTO UPLOAD =====
+$('btn-photo-pick').addEventListener('click', () => $('photo-input').click());
+$('photo-input').addEventListener('change', async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  if (!me.member_id) { alert('Pas de fiche jockey liée à ce compte.'); return; }
+  if (file.size > 5 * 1024 * 1024) { alert('Photo trop lourde (max 5 Mo).'); e.target.value = ''; return; }
+  const btn = $('btn-photo-pick');
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Envoi...';
+  try {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = me.member_id + '/avatar-' + Date.now() + '.' + ext;
+    const { error: upErr } = await sb.storage.from('member-photos').upload(path, file, { upsert: true, contentType: file.type || 'image/jpeg' });
+    if (upErr) throw upErr;
+    const { data: pub } = sb.storage.from('member-photos').getPublicUrl(path);
+    const publicUrl = pub.publicUrl + '?t=' + Date.now();
+    if (me.role === 'jockey') {
+      const { error: rpcErr } = await sb.rpc('set_my_photo', { p_url: publicUrl });
+      if (rpcErr) throw rpcErr;
+    } else {
+      const { error: updErr } = await sb.from('members').update({ photo_url: publicUrl }).eq('id', me.member_id);
+      if (updErr) throw updErr;
+    }
+    await loadAll();
+    renderProfile();
+    if ($('screen-home').classList.contains('active')) renderDashboard();
+  } catch (err) {
+    alert('Erreur upload : ' + (err.message || err));
+  } finally {
+    btn.disabled = false; btn.textContent = orig;
+    e.target.value = '';
+  }
+});
+
+$('btn-poster-link').addEventListener('click', () => showScreen('poster'));
+$('btn-poster-print').addEventListener('click', () => window.print());
 
 // Close sheet on backdrop click
 document.querySelectorAll('.sheet').forEach(s => {
