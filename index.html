@@ -381,6 +381,7 @@ a { color: inherit; text-decoration: none; }
   <div class="content">
     <div class="section-title">Membres inscrits<span class="mono">Attribuer les r&ocirc;les</span></div>
     <div id="admin-list" class="rank-list"><div class="loader">Chargement...</div></div>
+    <input type="file" id="admin-photo-input" accept="image/*" style="display:none">
   </div>
 </div>
 
@@ -803,7 +804,10 @@ async function renderAdmin() {
         '<button type="button" class="role-btn ' + (p.role === 'chef' ? 'sel-chef' : '') + '" data-id="' + esc(p.id) + '" data-role="chef">Chef</button>' +
         '<button type="button" class="role-btn ' + (p.role === 'owner' ? 'sel-owner' : '') + '" data-id="' + esc(p.id) + '" data-role="owner">Owner</button>' +
       '</div>';
-    return '<div class="admin-row"><div class="admin-row-head">' + avatarBlock + '<div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Équipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + roleButtons + '</div>';
+    const photoRow = p.member_id
+      ? '<button type="button" class="btn-photo admin-photo-btn" data-member-id="' + esc(p.member_id) + '" style="background:var(--cream-2);color:var(--ink);align-self:flex-start">&#128247; ' + (photoUrl ? 'Changer la photo' : 'Ajouter une photo') + '</button>'
+      : '<div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);text-align:center;padding:4px">Aucune fiche jockey · photo impossible</div>';
+    return '<div class="admin-row"><div class="admin-row-head">' + avatarBlock + '<div class="info"><div class="name">' + esc(p.full_name || '-') + '</div><div class="team">Équipe ' + esc(teamLabel) + '</div></div><span class="badge-role ' + esc(p.role) + '">' + esc(p.role) + '</span></div>' + photoRow + roleButtons + '</div>';
   }).join('');
 
   document.querySelectorAll('#admin-list .role-btn').forEach(btn => {
@@ -816,7 +820,40 @@ async function renderAdmin() {
       await renderAdmin();
     });
   });
+
+  document.querySelectorAll('#admin-list .admin-photo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = $('admin-photo-input');
+      input.dataset.targetMemberId = btn.dataset.memberId;
+      input.click();
+    });
+  });
 }
+
+// Admin photo input handler (owner uploads photo for any member)
+$('admin-photo-input').addEventListener('change', async (e) => {
+  const file = e.target.files && e.target.files[0];
+  const memberId = e.target.dataset.targetMemberId;
+  if (!file || !memberId) { e.target.value = ''; return; }
+  if (file.size > 5 * 1024 * 1024) { alert('Photo trop lourde (max 5 Mo).'); e.target.value = ''; return; }
+  try {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = memberId + '/avatar-' + Date.now() + '.' + ext;
+    const { error: upErr } = await sb.storage.from('member-photos').upload(path, file, { upsert: true, contentType: file.type || 'image/jpeg' });
+    if (upErr) throw upErr;
+    const { data: pub } = sb.storage.from('member-photos').getPublicUrl(path);
+    const publicUrl = pub.publicUrl + '?t=' + Date.now();
+    const { error: updErr } = await sb.from('members').update({ photo_url: publicUrl }).eq('id', memberId);
+    if (updErr) throw updErr;
+    await loadAll();
+    await renderAdmin();
+  } catch (err) {
+    alert('Erreur upload : ' + (err.message || err));
+  } finally {
+    e.target.value = '';
+    delete e.target.dataset.targetMemberId;
+  }
+});
 
 // ===== SANCTION FLOW =====
 function openSanctionFlow() {
